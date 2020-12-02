@@ -11,10 +11,18 @@ on:
 jobs:
   build:
     runs-on: ubuntu-16.04
-    container:
-      image: daitya96/test-cicd:v1.0
     steps:
       - uses: actions/checkout@v2
-      - name: Running Makefile
-        run: docker-compose up
+      - name: Docker login
+        run: docker login -u ${{ secrets.DOCKER_USERS }} -p ${{ secrets.DOCKER_PASSWORD }}
+      - name: Build
+        run: docker build -t test-cicd .
+      - name: Tags
+        run: |
+          docker tag test-cicd ${{ secrets.DOCKER_USER }}/test-cicd:${{ github.sha }}
+          docker tag test-cicd ${{ secrets.DOCKER_USER }}/test-cicd:latest
+      - name: Push
+        run: |
+          docker push ${{ secrets.DOCKER_USER }}/test-cicd:${{ github.sha }}
+          docker push ${{ secrets.DOCKER_USER }}/test-cicd:latest
 
