@@ -1,0 +1,20 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_requests:
+    branches: [ main ]
+
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: daitya96/test-cicd:v1.0
+    steps:
+      - uses: actions/checkout@v2
+      - name: Running Makefile
+        run: docker-compose up
+
